@@ -1,0 +1,50 @@
+
+channelID = 1067599;
+iftttURL = 'https://maker.ifttt.com/trigger/test/with/key/jhfMDkoKf90e4RWyfbGwm4PuZwZCW5QzdlxABiwr7JH';
+readAPIKey = 'RKD8P8TAECJWPQZ0';
+thingSpeakURL = strcat('https://api.thingspeak.com/channels/',string(channelID),'/fields/1/last.txt');
+lastValue = str2double(webread(thingSpeakURL, 'api_key', readAPIKey));
+net=neuralnet;
+disp('lastValue');
+
+disp(lastValue);
+Y = net(lastValue);
+Y=round(Y);
+disp('Y');
+
+disp(Y);
+switch Y
+    
+    case 1
+    disp(lastValue);
+    Message = 'Machine is Normal';
+    disp(Message);
+    webwrite(iftttURL,'value1',lastValue,'value2',Message);
+    case 2
+    disp(lastValue);
+    Message = 'Machine is Medium';
+    disp(Message);
+    webwrite(iftttURL,'value1',lastValue,'value2',Message);
+    case 3
+    disp(lastValue);
+    Message = 'Machine is Abnormal';
+    disp(Message);
+    webwrite(iftttURL,'value1',lastValue,'value2',Message);
+    
+end
+
+function net=neuralnet
+X = [0:254];
+TC1=1;
+for i=1:254
+    if i<75
+    TC1=[TC1 1];
+    elseif i > 75 && i <150
+    TC1=[TC1 2];
+    else
+    TC1=[TC1 3];
+
+    end
+end
+net = newrbe(X,TC1);
+end
